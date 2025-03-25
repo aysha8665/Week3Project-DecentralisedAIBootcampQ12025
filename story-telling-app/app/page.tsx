@@ -3,6 +3,14 @@
 import { useState } from "react";
 import { useChat } from "ai/react";
 
+// Define the character type
+interface Character {
+  id: number;
+  name: string;
+  description: string;
+  personality: string;
+}
+
 export default function Chat() {
   const { messages, append, isLoading } = useChat();
   
@@ -25,31 +33,33 @@ export default function Chat() {
     tone: "",
   });
 
-  // State for characters
-  const [characters, setCharacters] = useState([]);
+  // State for characters with explicit typing
+  const [characters, setCharacters] = useState<Character[]>([]);
   const [newCharacter, setNewCharacter] = useState({
     name: "",
     description: "",
-    personality: ""
+    personality: "",
   });
-  const [editingId, setEditingId] = useState(null);
+  const [editingId, setEditingId] = useState<number | null>(null);
 
-  const handleChange = ({ target: { name, value } }) => {
+  // Type the event parameter
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
     setState({
       ...state,
       [name]: value,
     });
   };
 
-  // Handle character input changes
-  const handleCharacterChange = ({ target: { name, value } }) => {
+  // Type the event parameter
+  const handleCharacterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
     setNewCharacter({
       ...newCharacter,
-      [name]: value
+      [name]: value,
     });
   };
 
-  // Add new character
   const addCharacter = () => {
     if (newCharacter.name && newCharacter.description && newCharacter.personality) {
       setCharacters([...characters, { id: Date.now(), ...newCharacter }]);
@@ -57,22 +67,19 @@ export default function Chat() {
     }
   };
 
-  // Delete character
-  const deleteCharacter = (id) => {
+  const deleteCharacter = (id: number) => {
     setCharacters(characters.filter(character => character.id !== id));
   };
 
-  // Start editing character
-  const startEditing = (character) => {
+  const startEditing = (character: Character) => {
     setEditingId(character.id);
     setNewCharacter({
       name: character.name,
       description: character.description,
-      personality: character.personality
+      personality: character.personality,
     });
   };
 
-  // Save edited character
   const saveEdit = () => {
     setCharacters(characters.map(character =>
       character.id === editingId 
